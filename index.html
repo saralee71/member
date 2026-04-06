@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이현정의 부동산경매 현장답사 체크리스트</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple-light: #EEEDFE;
+    --purple-mid: #534AB7;
+    --purple-dark: #3C3489;
+    --green-light: #E1F5EE;
+    --green-dark: #085041;
+    --orange-light: #FAECE7;
+    --orange-dark: #712B13;
+    --amber-light: #FAEEDA;
+    --amber-dark: #633806;
+    --blue-light: #E6F1FB;
+    --blue-dark: #0C447C;
+    --red-light: #FCEBEB;
+    --red-dark: #791F1F;
+    --text-primary: #1a1a1a;
+    --text-secondary: #555;
+    --text-muted: #999;
+    --border: #e5e5e5;
+    --bg: #f7f6f3;
+    --card-bg: #ffffff;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding-bottom: 3rem;
+  }
+
+  /* 헤더 */
+  .top-header {
+    background: var(--purple-mid);
+    color: white;
+    padding: 2rem 1.25rem 1.5rem;
+    text-align: center;
+  }
+  .top-header .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  .top-header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .top-header p {
+    font-size: 13px;
+    opacity: 0.8;
+  }
+
+  /* 메인 컨테이너 */
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1.25rem 1rem;
+  }
+
+  /* 메타 카드 */
+  .meta-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .meta-card h2 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+  .meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .meta-grid .full { grid-column: 1 / -1; }
+  .meta-field label {
+    display: block;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .meta-field input {
+    width: 100%;
+    font-size: 14px;
+    color: var(--text-primary);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    background: #fafaf9;
+    outline: none;
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: border-color 0.15s;
+  }
+  .meta-field input:focus { border-color: var(--purple-mid); }
+
+  /* 진행률 */
+  .progress-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .progress-top span { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+  .progress-top strong { font-size: 15px; color: var(--purple-mid); font-weight: 700; }
+  .progress-bar {
+    height: 6px;
+    background: #eee;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--purple-mid);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+  .step-dots {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .step-dot {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: #eee;
+    transition: background 0.3s;
+  }
+  .step-dot.done { background: var(--purple-mid); }
+  .step-dot.partial { background: #AFA9EC; }
+
+  /* 섹션 카드 */
+  .section-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border);
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .section-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.9rem 1.25rem;
+    cursor: pointer;
+    user-select: none;
+  }
+  .badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .b1 { background: var(--purple-light); color: var(--purple-dark); }
+  .b2 { background: var(--green-light); color: var(--green-dark); }
+  .b3 { background: var(--orange-light); color: var(--orange-dark); }
+  .b4 { background: var(--amber-light); color: var(--amber-dark); }
+  .b5 { background: var(--blue-light); color: var(--blue-dark); }
+  .b6 { background: var(--red-light); color: var(--red-dark); }
+
+  .section-info { flex: 1; }
+  .section-title { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+  .section-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .section-cnt { font-size: 12px; color: var(--text-muted); min-width: 30px; text-align: right; }
+  .chv {
+    font-size: 16px;
+    color: var(--text-muted);
+    transition: transform 0.25s;
+    display: inline-block;
+    line-height: 1;
+  }
+  .chv.open { transform: rotate(90deg); }
+
+  .items {
+    display: none;
+    border-top: 0.5px solid var(--border);
+    padding: 0.25rem 1.25rem 0.75rem;
+  }
+  .items.open { display: block; }
+
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 0.5px solid #f0f0f0;
+  }
+  .item:last-child { border-bottom: none; }
+
+  .item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    margin-top: 1px;
+    cursor: pointer;
+    accent-color: var(--purple-mid);
+    border-radius: 4px;
+  }
+  .item-label {
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.45;
+    cursor: pointer;
+    transition: color 0.15s;
+    font-weight: 500;
+  }
+  .item-label.done {
+    color: var(--text-muted);
+    text-decoration: line-through;
+    text-decoration-color: #ccc;
+  }
+  .item-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  /* 편집 모드 */
+  .edit-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.75rem;
+  }
+  .mode-btn {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 7px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    border: 0.5px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text-primary);
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: all 0.15s;
+  }
+  .mode-btn:hover { background: var(--purple-light); border-color: #AFA9EC; color: var(--purple-dark); }
+  .mode-btn.editing { background: var(--purple-light); border-color: #AFA9EC; color: var(--purple-dark); }
+
+  .item-label-input, .item-hint-input, .section-title-input, .section-sub-input {
+    width: 100%;
+    font-size: 14px;
+    color: var(--text-primary);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 5px 10px;
+    background: #fafaf9;
+    font-family: 'Noto Sans KR', sans-serif;
+    outline: none;
+    display: none;
+  }
+  .item-hint-input { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+  .section-sub-input { font-size: 11px; margin-top: 4px; }
+
+  .del-btn {
+    font-size: 18px;
+    color: var(--text-muted);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1;
+    display: none;
+    min-width: 22px;
+    margin-top: 1px;
+    font-family: sans-serif;
+    transition: color 0.15s;
+  }
+  .del-btn:hover { color: #E24B4A; }
+
+  .add-item-btn {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 0;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--purple-mid);
+    background: none;
+    border: none;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .add-item-btn:hover { opacity: 0.7; }
+
+  /* 메모 */
+  .memo-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border);
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .memo-card label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+  .memo-card textarea {
+    width: 100%;
+    font-size: 14px;
+    color: var(--text-primary);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    background: #fafaf9;
+    resize: vertical;
+    min-height: 80px;
+    font-family: 'Noto Sans KR', sans-serif;
+    outline: none;
+    line-height: 1.6;
+  }
+  .memo-card textarea:focus { border-color: var(--purple-mid); }
+
+  /* 하단 버튼 */
+  .bottom-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 0.25rem;
+  }
+  .bottom-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    font-family: 'Noto Sans KR', sans-serif;
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+  .bottom-btn:hover { opacity: 0.85; }
+  .btn-primary { background: var(--purple-mid); color: white; }
+  .btn-secondary { background: var(--card-bg); color: var(--purple-mid); border: 1.5px solid var(--purple-mid); }
+
+  /* 결정 상태 */
+  .decision-area {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border);
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .decision-area label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+  }
+  .decision-btns { display: flex; gap: 10px; }
+  .dec-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1.5px solid var(--border);
+    background: #fafaf9;
+    color: var(--text-secondary);
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: all 0.15s;
+  }
+  .dec-btn.go.active { background: var(--green-light); border-color: #1D9E75; color: var(--green-dark); }
+  .dec-btn.nogo.active { background: var(--red-light); border-color: #E24B4A; color: var(--red-dark); }
+
+  /* 푸터 */
+  .footer {
+    text-align: center;
+    padding: 2rem 1rem 1rem;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+
+<div class="top-header">
+  <div class="tag">이현정의 부동산경매 입문자를 위한</div>
+  <h1>현장답사 체크리스트</h1>
+  <p>사전조사부터 입찰 결정까지 단계별 확인</p>
+</div>
+
+<div class="container">
+
+  <!-- 메타 정보 -->
+  <div class="meta-card">
+    <h2>물건 정보</h2>
+    <div class="meta-grid">
+      <div class="meta-field">
+        <label>사건번호</label>
+        <input type="text" id="case-no" placeholder="예) 2024타경12345">
+      </div>
+      <div class="meta-field">
+        <label>임장일</label>
+        <input type="date" id="visit-date">
+      </div>
+      <div class="meta-field full">
+        <label>물건 주소</label>
+        <input type="text" id="address" placeholder="주소를 입력하세요">
+      </div>
+    </div>
+  </div>
+
+  <!-- 진행률 -->
+  <div class="progress-card">
+    <div class="progress-top">
+      <span>전체 진행률</span>
+      <strong id="prog-text">0 / 22 완료</strong>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+    </div>
+    <div class="step-dots" id="step-dots"></div>
+  </div>
+
+  
+  <!-- 섹션들 -->
+  <div id="sections-wrap"></div>
+
+  <!-- 입찰 결정 -->
+  <div class="decision-area">
+    <label>입찰 최종 결정</label>
+    <div class="decision-btns">
+      <button class="dec-btn go" id="btn-go" onclick="setDecision('go')">✅ GO — 입찰한다</button>
+      <button class="dec-btn nogo" id="btn-nogo" onclick="setDecision('nogo')">❌ NO-GO — 패스한다</button>
+    </div>
+  </div>
+
+  <!-- 메모 -->
+  <div class="memo-card">
+    <label>현장 메모</label>
+    <textarea placeholder="특이사항, 중개사 코멘트, 현장에서 느낀 점 등을 자유롭게 기록하세요."></textarea>
+  </div>
+
+  <div class="footer">
+    이현정의 부동산경매 멤버 전용자료
+  </div>
+
+</div>
+
+<script>
+let editMode = false;
+let decision = null;
+
+const data = [
+  { id:'s1', badge:'Step 1', bc:'b1', title:'사전조사 — 수익 구간 분석', sub:'집에서 먼저 확인',
+    items:[
+      {label:'스피드옥션 물건 상세페이지에서 최저가 확인', hint:'현재 회차 최저가 = 입찰 시작 금액'},
+      {label:'감정가 대비 최저가 비율 체크', hint:'회차가 올라갈수록 최저가 낮아짐 (통상 20~30% 씩 감액)'},
+      {label:'예상 낙찰가 범위 설정', hint:'유사 물건 낙찰 이력 검색해 경쟁 강도 파악'},
+      {label:'인수 비용 전체 합산 (취득세·법무비·수리비 등)', hint:'낙찰가 + 부대비용 = 실제 투자 원가'},
+      {label:'수익 나는 최대 입찰가 사전 결정', hint:'이 금액을 넘으면 입찰하지 않는다는 원칙 세우기'}
+    ]
+  },
+  { id:'s2', badge:'Step 2', bc:'b2', title:'사전조사 — 시세 및 거래 분석', sub:'집에서 먼저 확인',
+    items:[
+      {label:'네이버부동산에서 매매·전세 호가 확인', hint:'현재 시장에서 부르는 가격 파악'},
+      {label:'국토부 실거래가로 최근 6개월 실제 거래가 확인', hint:'호가 ≠ 실거래가, 둘의 차이로 시장 온도 파악'},
+      {label:'부동산플래닛에서 거래 빈도·공백 기간 확인', hint:'거래가 뜸하면 환금성 낮음 → 리스크 높아짐'},
+      {label:'전세가율 계산 (전세가 ÷ 매매가)', hint:'전세가율 높을수록 투자금 회수 안전성 높음'}
+    ]
+  },
+  { id:'s3', badge:'Step 3', bc:'b3', title:'외관 및 건물 상태', sub:'현장에서 직접 확인',
+    items:[
+      {label:'외벽·지붕 균열, 누수 흔적 확인', hint:'곰팡이·물 자국은 사진으로 기록, 수리비 추산 근거'},
+      {label:'출입문·창문 개폐 정상, 잠금장치 상태', hint:'현관 도어락 교체 여부도 체크'},
+      {label:'내부 도배·바닥재·수도·전기·가스 상태', hint:'단전·단수 상태면 장기 방치 가능성 높음'},
+      {label:'불법 증축·구조 변경 여부', hint:'등기부 면적과 실제 면적 비교, 베란다 확장 등 확인'}
+    ]
+  },
+  { id:'s4', badge:'Step 4', bc:'b4', title:'점유자 상태 확인', sub:'현장에서 직접 확인',
+    items:[
+      {label:'실제 점유자 파악 (소유자 / 임차인 / 무단점유)', hint:'초인종 누르거나 관리사무소 통해 확인'},
+      {label:'임차인인 경우 보증금·계약기간 확인 요청', hint:'대항력·우선변제권 여부는 사전 서류로 이미 확인해야 함'},
+      {label:'명도 협조 의사 파악', hint:'비협조 시 명도소송 비용·기간(3~6개월) 추가 반영'},
+      {label:'관리사무소 방문 — 체납 관리비 확인', hint:'공용 체납관리비는 낙찰자가 일부 인수할 수 있음'}
+    ]
+  },
+  { id:'s5', badge:'Step 5', bc:'b5', title:'부동산 중개사 질문', sub:'현장 인근 중개사 2곳 이상',
+    items:[
+      {label:'"이 물건 지금 얼마에 팔려요?" — 매매·전세 시세 확인', hint:'온라인 호가와 실제 현장 시세 차이를 검증'},
+      {label:'"요즘 이 동네 거래 잘 돼요?" — 환금성 확인', hint:'거래 잘 안 된다는 답이 나오면 출구 전략 재검토'},
+      {label:'"특별히 주의할 점 있나요?" — 지역 특이사항 확인', hint:'재개발 이슈, 혐오시설, 소음, 주차 문제 등 현장 정보 수집'}
+    ]
+  },
+  { id:'s6', badge:'Step 6', bc:'b6', title:'입찰 전 최종 판단', sub:'모든 조사 후 결정',
+    items:[
+      {label:'수익·리스크 요인 전부 목록화하고 최종 금액 재확인', hint:'Step 1에서 정한 최대 입찰가를 넘지 않는지 재확인'},
+      {label:'입찰 여부 최종 결정 (Go / No-Go)', hint:'불리한 요소가 많으면 과감히 포기하는 것도 전략'}
+    ]
+  }
+];
+
+let checkStates = {};
+let openSections = { s1: true };
+
+function countTotal() {
+  return data.reduce((a, s) => a + s.items.length, 0);
+}
+
+function upd() {
+  const total = countTotal();
+  let done = 0;
+  const dots = document.getElementById('step-dots');
+  if (dots) dots.innerHTML = '';
+
+  data.forEach(sec => {
+    let sdone = sec.items.filter((_, i) => checkStates[sec.id + '_' + i]).length;
+    done += sdone;
+    const cnt = document.getElementById('cnt-' + sec.id);
+    if (cnt) cnt.textContent = sdone + '/' + sec.items.length;
+
+    if (dots) {
+      const dot = document.createElement('div');
+      dot.className = 'step-dot' + (sdone === sec.items.length && sec.items.length > 0 ? ' done' : sdone > 0 ? ' partial' : '');
+      dots.appendChild(dot);
+    }
+  });
+
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  const pt = document.getElementById('prog-text');
+  const pf = document.getElementById('prog-fill');
+  if (pt) pt.textContent = done + ' / ' + total + ' 완료';
+  if (pf) pf.style.width = pct + '%';
+}
+
+function toggleSection(sid) {
+  openSections[sid] = !openSections[sid];
+  const items = document.getElementById('items-' + sid);
+  const chv = document.getElementById('chv-' + sid);
+  if (items) items.classList.toggle('open', !!openSections[sid]);
+  if (chv) chv.classList.toggle('open', !!openSections[sid]);
+}
+
+function toggleMode() {
+  editMode = !editMode;
+  const btn = document.getElementById('mode-btn');
+  btn.textContent = editMode ? '✅ 편집 완료' : '✏️ 항목 편집';
+  btn.classList.toggle('editing', editMode);
+  if (editMode) {
+    Object.keys(openSections).forEach(k => openSections[k] = true);
+    data.forEach(s => openSections[s.id] = true);
+  }
+  render();
+}
+
+function setDecision(val) {
+  decision = decision === val ? null : val;
+  document.getElementById('btn-go').classList.toggle('active', decision === 'go');
+  document.getElementById('btn-nogo').classList.toggle('active', decision === 'nogo');
+}
+
+function render() {
+  const wrap = document.getElementById('sections-wrap');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+
+  data.forEach((sec) => {
+    const isOpen = !!openSections[sec.id];
+    const secDiv = document.createElement('div');
+    secDiv.className = 'section-card';
+
+    // 헤더
+    const hdr = document.createElement('div');
+    hdr.className = 'section-header';
+    if (!editMode) hdr.onclick = () => toggleSection(sec.id);
+
+    const badge = document.createElement('span');
+    badge.className = 'badge ' + sec.bc;
+    badge.textContent = sec.badge;
+    hdr.appendChild(badge);
+
+    const info = document.createElement('div');
+    info.className = 'section-info';
+
+    if (editMode) {
+      const ti = document.createElement('input');
+      ti.className = 'section-title-input';
+      ti.style.display = 'block';
+      ti.value = sec.title;
+      ti.oninput = e => { sec.title = e.target.value; };
+      info.appendChild(ti);
+      const si = document.createElement('input');
+      si.className = 'section-sub-input';
+      si.style.display = 'block';
+      si.value = sec.sub;
+      si.oninput = e => { sec.sub = e.target.value; };
+      info.appendChild(si);
+    } else {
+      const tt = document.createElement('div');
+      tt.className = 'section-title';
+      tt.textContent = sec.title;
+      info.appendChild(tt);
+      const st = document.createElement('div');
+      st.className = 'section-sub';
+      st.textContent = sec.sub;
+      info.appendChild(st);
+    }
+    hdr.appendChild(info);
+
+    const cnt = document.createElement('span');
+    cnt.className = 'section-cnt';
+    cnt.id = 'cnt-' + sec.id;
+    const sdone = sec.items.filter((_, i) => checkStates[sec.id + '_' + i]).length;
+    cnt.textContent = sdone + '/' + sec.items.length;
+    hdr.appendChild(cnt);
+
+    if (!editMode) {
+      const chv = document.createElement('span');
+      chv.className = 'chv' + (isOpen ? ' open' : '');
+      chv.id = 'chv-' + sec.id;
+      chv.textContent = '›';
+      hdr.appendChild(chv);
+    }
+
+    secDiv.appendChild(hdr);
+
+    // 아이템
+    const itemsDiv = document.createElement('div');
+    itemsDiv.className = 'items' + ((isOpen || editMode) ? ' open' : '');
+    itemsDiv.id = 'items-' + sec.id;
+
+    sec.items.forEach((item, ii) => {
+      const key = sec.id + '_' + ii;
+      const row = document.createElement('div');
+      row.className = 'item';
+
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = !!checkStates[key];
+      cb.onchange = () => { checkStates[key] = cb.checked; upd(); render(); };
+      if (editMode) cb.style.display = 'none';
+      row.appendChild(cb);
+
+      const tw = document.createElement('div');
+      tw.style.flex = '1';
+
+      if (editMode) {
+        const li = document.createElement('input');
+        li.className = 'item-label-input';
+        li.style.display = 'block';
+        li.value = item.label;
+        li.oninput = e => { item.label = e.target.value; };
+        tw.appendChild(li);
+        const hi = document.createElement('input');
+        hi.className = 'item-hint-input';
+        hi.style.display = 'block';
+        hi.value = item.hint;
+        hi.oninput = e => { item.hint = e.target.value; };
+        tw.appendChild(hi);
+      } else {
+        const lbl = document.createElement('div');
+        lbl.className = 'item-label' + (checkStates[key] ? ' done' : '');
+        lbl.textContent = item.label;
+        lbl.onclick = () => { cb.checked = !cb.checked; checkStates[key] = cb.checked; upd(); render(); };
+        tw.appendChild(lbl);
+        if (item.hint) {
+          const hint = document.createElement('div');
+          hint.className = 'item-hint';
+          hint.textContent = item.hint;
+          tw.appendChild(hint);
+        }
+      }
+      row.appendChild(tw);
+
+      if (editMode) {
+        const del = document.createElement('button');
+        del.className = 'del-btn';
+        del.style.display = 'block';
+        del.textContent = '×';
+        del.onclick = () => {
+          sec.items.splice(ii, 1);
+          const ns = {};
+          Object.keys(checkStates).forEach(k => {
+            if (!k.startsWith(sec.id + '_')) ns[k] = checkStates[k];
+          });
+          checkStates = ns;
+          render(); upd();
+        };
+        row.appendChild(del);
+      }
+
+      itemsDiv.appendChild(row);
+    });
+
+    if (editMode) {
+      const addBtn = document.createElement('button');
+      addBtn.className = 'add-item-btn';
+      addBtn.style.display = 'flex';
+      addBtn.textContent = '＋ 항목 추가';
+      addBtn.onclick = () => {
+        sec.items.push({ label: '새 항목을 입력하세요', hint: '설명을 입력하세요' });
+        render(); upd();
+      };
+      itemsDiv.appendChild(addBtn);
+    }
+
+    secDiv.appendChild(itemsDiv);
+    wrap.appendChild(secDiv);
+  });
+
+  upd();
+}
+
+render();
+</script>
+</body>
+</html>
