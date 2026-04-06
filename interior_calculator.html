@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>인테리어 비용 계산기</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  background: #f5f5f0;
+  color: #1a1a1a;
+  min-height: 100vh;
+  padding: 24px 16px 40px;
+}
+
+.container {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+.page-sub {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #e8e8e8;
+  padding: 18px 18px;
+  margin-bottom: 12px;
+}
+
+.ctrl-label {
+  font-size: 11px;
+  color: #aaa;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.type-btns { display: flex; gap: 7px; }
+.type-btn {
+  flex: 1; padding: 9px 4px;
+  font-size: 13px; font-weight: 500;
+  border-radius: 10px; cursor: pointer;
+  font-family: inherit;
+  background: #f5f5f0;
+  color: #888;
+  border: 1.5px solid transparent;
+  text-align: center;
+  transition: all 0.15s;
+}
+.type-btn.active {
+  background: #EBF3FC;
+  color: #0C447C;
+  border-color: #85B7EB;
+}
+
+.slider-row {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 4px;
+}
+.slider-row input[type=range] {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 4px;
+  background: #e8e8e8;
+  border-radius: 2px;
+  outline: none;
+}
+.slider-row input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: #185FA5;
+  cursor: pointer;
+}
+.slider-val {
+  font-size: 20px; font-weight: 700;
+  color: #1a1a1a; min-width: 56px;
+  text-align: right;
+}
+
+.checks-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 7px; margin-top: 4px;
+}
+.chk-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px;
+  background: #f5f5f0;
+  border: 1.5px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px; font-weight: 500;
+  color: #555;
+  user-select: none;
+  transition: all 0.15s;
+}
+.chk-item.on {
+  background: #EBF3FC;
+  border-color: #85B7EB;
+  color: #0C447C;
+}
+.chk-dot {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.chk-item.on .chk-dot {
+  background: #185FA5;
+  border-color: #185FA5;
+}
+
+.result-area {
+  background: #0C447C;
+  border-radius: 14px;
+  padding: 20px 20px;
+  margin-bottom: 12px;
+}
+.result-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 6px;
+  letter-spacing: 0.04em;
+}
+.result-range {
+  font-size: 28px; font-weight: 700;
+  color: #fff; margin-bottom: 5px;
+  line-height: 1.2;
+}
+.result-mid {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+}
+
+.breakdown {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #e8e8e8;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.bk-row {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 11px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  gap: 10px;
+}
+.bk-row:last-child { border-bottom: none; }
+.bk-left { flex: 1; }
+.bk-name { font-size: 13px; color: #555; margin-bottom: 5px; }
+.bk-bar-wrap {
+  height: 3px; background: #f0f0f0;
+  border-radius: 2px; overflow: hidden;
+}
+.bk-bar { height: 3px; background: #378ADD; border-radius: 2px; transition: width 0.35s ease; }
+.bk-amt { font-size: 13px; font-weight: 600; color: #1a1a1a; white-space: nowrap; }
+.bk-total {
+  background: #f9f9f7;
+  padding: 13px 16px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.bk-total-label { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+.bk-total-amt { font-size: 15px; font-weight: 700; color: #185FA5; }
+
+.note {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
+  padding: 14px 16px;
+  font-size: 11.5px;
+  color: #aaa;
+  line-height: 1.7;
+}
+
+.cta-box {
+  background: #1a1a2e;
+  border-radius: 14px;
+  padding: 20px 20px;
+  margin-top: 12px;
+  text-align: center;
+}
+.cta-tag {
+  display: inline-block;
+  background: rgba(45,212,191,0.15);
+  color: #2dd4bf;
+  font-size: 10px; font-weight: 600;
+  padding: 3px 12px; border-radius: 99px;
+  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+}
+.cta-title {
+  font-size: 16px; font-weight: 700;
+  color: #fff; margin-bottom: 5px;
+  line-height: 1.4;
+}
+.cta-sub {
+  font-size: 12px; color: rgba(255,255,255,0.45);
+  margin-bottom: 14px; line-height: 1.6;
+}
+.cta-date {
+  display: inline-block;
+  background: #2dd4bf;
+  color: #0f2027;
+  font-size: 14px; font-weight: 700;
+  padding: 10px 28px; border-radius: 10px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="page-title">인테리어 비용 계산기</div>
+  <div class="page-sub">평수와 물건 유형을 선택하면<br>예상 인테리어 비용을 바로 확인할 수 있어요</div>
+
+  <div class="card">
+    <div class="ctrl-label">물건 유형</div>
+    <div class="type-btns">
+      <div class="type-btn active" onclick="setType('apt',this)">아파트</div>
+      <div class="type-btn" onclick="setType('villa',this)">빌라·다세대</div>
+      <div class="type-btn" onclick="setType('officetel',this)">오피스텔</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ctrl-label">공사 범위</div>
+    <div class="type-btns">
+      <div class="type-btn active" onclick="setScope('part',this)">부분 수리</div>
+      <div class="type-btn" onclick="setScope('full',this)">올수리</div>
+      <div class="type-btn" onclick="setScope('premium',this)">풀옵션</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ctrl-label">면적</div>
+    <div class="slider-row">
+      <input type="range" id="area" min="10" max="50" value="25" step="1" oninput="calc()">
+      <div class="slider-val"><span id="area-val">25</span>평</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ctrl-label">추가 공사 항목</div>
+    <div class="checks-grid">
+      <div class="chk-item" onclick="toggle(this,'bath')">
+        <div class="chk-dot"></div>화장실 수리
+      </div>
+      <div class="chk-item" onclick="toggle(this,'sash')">
+        <div class="chk-dot"></div>샤시 교체
+      </div>
+      <div class="chk-item" onclick="toggle(this,'kitchen')">
+        <div class="chk-dot"></div>주방 풀세트
+      </div>
+      <div class="chk-item" onclick="toggle(this,'film')">
+        <div class="chk-dot"></div>필름·도장
+      </div>
+      <div class="chk-item" onclick="toggle(this,'floor')">
+        <div class="chk-dot"></div>바닥재 교체
+      </div>
+      <div class="chk-item" onclick="toggle(this,'elec')">
+        <div class="chk-dot"></div>전기·조명
+      </div>
+    </div>
+  </div>
+
+  <div class="result-area">
+    <div class="result-label">예상 인테리어 비용 (VAT 별도)</div>
+    <div class="result-range" id="result-range">— 원</div>
+    <div class="result-mid" id="result-mid"></div>
+  </div>
+
+  <div class="breakdown" id="breakdown"></div>
+
+  <div class="note">
+    실제 견적 데이터를 기반으로 한 참고용 예측값입니다. 시공사·자재 등급·지역에 따라 ±30% 이상 차이가 날 수 있어요. 정확한 견적은 현장 방문 후 확인하세요.
+  </div>
+
+  <div class="cta-box">
+    <div class="cta-tag">2026 첫 무료 라이브</div>
+    <div class="cta-title">이 물건, 경매로 사면<br>얼마나 절약할 수 있을까요?</div>
+    <div class="cta-sub">인테리어 비용 예측부터 입찰 전략까지<br>이현정 대표가 직접 알려드립니다</div>
+    <div class="cta-date">4월 8일 PM 8:00 무료 참여</div>
+  </div>
+
+</div>
+
+<script>
+let type = 'apt', scope = 'part';
+const extras = { bath:false, sash:false, kitchen:false, film:false, floor:false, elec:false };
+
+const BASE = {
+  apt:       { part:[200,280], full:[350,450], premium:[550,750] },
+  villa:     { part:[150,220], full:[280,380], premium:[420,580] },
+  officetel: { part:[120,180], full:[220,320], premium:[380,500] },
+};
+
+const EXTRA = {
+  bath:    { label:'화장실 수리',  apt:[120,200],   villa:[80,150],  officetel:[80,150] },
+  sash:    { label:'샤시 교체',   apt:[200,400],   villa:[150,350], officetel:[100,200] },
+  kitchen: { label:'주방 풀세트', apt:[150,300],   villa:[100,200], officetel:[80,150] },
+  film:    { label:'필름·도장',   apt:[100,180],   villa:[60,120],  officetel:[60,120] },
+  floor:   { label:'바닥재 교체', apt:[80,150],    villa:[50,100],  officetel:[50,100] },
+  elec:    { label:'전기·조명',   apt:[80,130],    villa:[50,100],  officetel:[50,100] },
+};
+
+function setType(t, el) {
+  type = t;
+  el.closest('.type-btns').querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  calc();
+}
+function setScope(s, el) {
+  scope = s;
+  el.closest('.type-btns').querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  calc();
+}
+function toggle(el, key) {
+  extras[key] = !extras[key];
+  el.classList.toggle('on', extras[key]);
+  calc();
+}
+
+function fmt(n) { return Math.round(n).toLocaleString() + '만원'; }
+
+function calc() {
+  const area = parseInt(document.getElementById('area').value);
+  document.getElementById('area-val').textContent = area;
+
+  const [blo, bhi] = BASE[type][scope];
+  let lo = blo * area / 10, hi = bhi * area / 10;
+
+  const rows = [];
+  const baseLabel = { part:'기본 부분수리', full:'기본 올수리', premium:'풀옵션 공사' }[scope];
+  rows.push({ name: baseLabel, lo: blo*area/10, hi: bhi*area/10 });
+
+  for (const [key, on] of Object.entries(extras)) {
+    if (!on) continue;
+    const [elo, ehi] = EXTRA[key][type];
+    const mult = key === 'bath' ? Math.max(1, Math.round(area/10)) : 1;
+    const el = elo * mult, eh = ehi * mult;
+    lo += el; hi += eh;
+    rows.push({ name: EXTRA[key].label, lo: el, hi: eh });
+  }
+
+  const mid = (lo + hi) / 2;
+  document.getElementById('result-range').textContent = fmt(lo) + ' ~ ' + fmt(hi);
+  document.getElementById('result-mid').textContent = '중간값 약 ' + fmt(mid) + ' · ' + area + '평 기준';
+
+  let html = '';
+  rows.forEach(r => {
+    const pct = Math.round((r.hi / hi) * 100);
+    html += `<div class="bk-row">
+      <div class="bk-left">
+        <div class="bk-name">${r.name}</div>
+        <div class="bk-bar-wrap"><div class="bk-bar" style="width:${pct}%"></div></div>
+      </div>
+      <div class="bk-amt">${fmt(r.lo)}~${fmt(r.hi)}</div>
+    </div>`;
+  });
+  html += `<div class="bk-total">
+    <span class="bk-total-label">예상 합계</span>
+    <span class="bk-total-amt">${fmt(lo)} ~ ${fmt(hi)}</span>
+  </div>`;
+  document.getElementById('breakdown').innerHTML = html;
+}
+
+calc();
+</script>
+</body>
+</html>
