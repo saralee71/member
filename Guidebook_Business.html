@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이현정의 부동산경매 매매사업자 가이드북</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --surface: #FFFFFF;
+    --surface2: #F4F3EE;
+    --border: #E2E0D8;
+    --border2: #CCCAB8;
+    --text: #1A1A16;
+    --text2: #5A5A50;
+    --text3: #8A8A7A;
+    --accent: #2B5C3F;
+    --accent-light: #E8F2EC;
+    --accent2: #8B4A1C;
+    --accent2-light: #F7EDE3;
+    --blue: #1C3F6E;
+    --blue-light: #E4EDF7;
+    --red: #8B1C1C;
+    --red-light: #F7E4E4;
+    --amber: #7A4F10;
+    --amber-light: #F7F0E3;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--accent);
+    color: white;
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .site-header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+
+  .site-header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+
+  .header-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 0.75rem;
+  }
+
+  .site-header h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .site-header .sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── EDIT BANNER ── */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--blue-light);
+    border: 1px solid #B8CDE8;
+    border-radius: var(--radius-sm);
+    padding: 11px 16px;
+    margin: 1.5rem auto;
+    max-width: 780px;
+    font-size: 13px;
+    color: var(--blue);
+  }
+
+
+  /* ── MAIN ── */
+  main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 1.25rem 4rem;
+  }
+
+  /* ── CHAPTER ── */
+  .chapter {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+
+  .chapter:hover {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+
+  .chapter-header {
+    padding: 1.1rem 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    user-select: none;
+    transition: filter 0.15s;
+  }
+
+  .chapter-header:hover { filter: brightness(0.97); }
+
+  .chapter-icon {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .chapter-title { flex: 1; }
+
+  .chapter-title h2 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .chapter-title p {
+    font-size: 12px;
+    color: var(--text2);
+  }
+
+  .toggle-btn {
+    font-size: 13px;
+    color: var(--text3);
+    transition: transform 0.25s;
+    flex-shrink: 0;
+    width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.05);
+  }
+
+  .toggle-btn.open { transform: rotate(180deg); }
+
+  .chapter-body {
+    padding: 1.1rem 1.4rem 1.4rem;
+    border-top: 1px solid var(--border);
+    display: none;
+  }
+
+  .chapter-body.open { display: block; }
+
+  /* ── BOXES ── */
+  .box {
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 11px 14px;
+    margin: 0.9rem 0;
+    border-left-width: 3px;
+    border-left-style: solid;
+  }
+
+  .box .tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+
+  .box p {
+    font-size: 13.5px;
+    line-height: 1.65;
+  }
+
+  .box-blue { background: var(--blue-light); border-color: #4A7DB5; }
+  .box-blue .tag { color: var(--blue); }
+
+  .box-amber { background: var(--amber-light); border-color: #C08030; }
+  .box-amber .tag { color: var(--amber); }
+
+  .box-green { background: var(--accent-light); border-color: var(--accent); }
+  .box-green .tag { color: var(--accent); }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 1.1rem 0 0.45rem;
+  }
+
+  /* ── TABLE ── */
+  .tax-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 0.7rem 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  .tax-table th {
+    background: var(--surface2);
+    padding: 8px 11px;
+    text-align: left;
+    font-weight: 700;
+    color: var(--text2);
+    font-size: 11.5px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tax-table td {
+    padding: 8px 11px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    line-height: 1.5;
+    vertical-align: middle;
+  }
+
+  .tax-table tr:last-child td { border-bottom: none; }
+  .tax-table tr:nth-child(even) { background: #FAFAF8; }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-red { background: var(--red-light); color: var(--red); }
+  .badge-green { background: var(--accent-light); color: var(--accent); }
+  .badge-amber { background: var(--amber-light); color: var(--amber); }
+
+  /* ── CARD GRID ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin: 0.7rem 0;
+  }
+
+  .info-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+
+  .info-card .label { font-size: 11px; color: var(--text3); margin-bottom: 3px; font-weight: 500; }
+  .info-card .value { font-size: 15px; font-weight: 700; color: var(--text); }
+  .info-card .desc { font-size: 11.5px; color: var(--text2); margin-top: 4px; line-height: 1.5; }
+
+  /* ── STEPS ── */
+  .steps { display: flex; flex-direction: column; margin: 0.7rem 0; }
+
+  .step { display: flex; gap: 14px; padding-bottom: 16px; }
+
+  .step-line {
+    display: flex; flex-direction: column; align-items: center; flex-shrink: 0;
+  }
+
+  .step-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .step-connector {
+    width: 1.5px; flex: 1; min-height: 10px;
+    background: var(--border2);
+    margin-top: 4px;
+  }
+
+  .step:last-child .step-connector { display: none; }
+
+  .step-content { flex: 1; padding-top: 3px; }
+  .step-content h3 { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+  .step-content p { font-size: 12.5px; color: var(--text2); line-height: 1.6; }
+
+  /* ── CHAPTER COLORS ── */
+  .ch1 .chapter-header { background: #EAF2EE; }
+  .ch1 .chapter-icon { background: #C4DDD0; color: #1D4D33; }
+
+  .ch2 .chapter-header { background: #E4EDF7; }
+  .ch2 .chapter-icon { background: #B8CDE8; color: #1C3F6E; }
+
+  .ch3 .chapter-header { background: #F7F0E3; }
+  .ch3 .chapter-icon { background: #EDD4A8; color: #7A4F10; }
+
+  .ch4 .chapter-header { background: #F2ECF7; }
+  .ch4 .chapter-icon { background: #D8C4E8; color: #4A2070; }
+
+  .ch5 .chapter-header { background: #F7EAE4; }
+  .ch5 .chapter-icon { background: #E8C4B0; color: #7A2A10; }
+
+  /* ── EDITABLE ── */
+  [contenteditable="true"] {
+    outline: none;
+    border-radius: 3px;
+    transition: background 0.15s, box-shadow 0.15s;
+    cursor: text;
+  }
+
+  [contenteditable="true"]:hover {
+    background: rgba(43, 92, 63, 0.07);
+  }
+
+  [contenteditable="true"]:focus {
+    background: rgba(43, 92, 63, 0.1);
+    box-shadow: 0 0 0 2px rgba(43, 92, 63, 0.3);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 12px;
+    color: var(--text3);
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    .chapter-body { display: block !important; }
+    .chapter { break-inside: avoid; box-shadow: none; }
+    body { background: white; }
+  }
+
+  @media (max-width: 600px) {
+    .site-header { padding: 2rem 1.25rem 1.75rem; }
+    .card-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-tag">가이드북 · 2026</div>
+  <h1>이현정의 부동산경매<br>매매사업자 가이드북</h1>
+  <p class="sub">중학생도 이해하는 쉬운 세금 안내서</p>
+</header>
+
+<main>
+
+  </div>
+
+  <!-- CH1 -->
+  <div class="chapter ch1" id="ch1">
+    <div class="chapter-header" onclick="toggle('ch1')">
+      <div class="chapter-icon">🏠</div>
+      <div class="chapter-title">
+        <h2>1장. 부동산매매업이란?</h2>
+        <p>집을 사고파는 것이 직업이 되는 순간</p>
+      </div>
+      <div class="toggle-btn open" id="btn-ch1">▽</div>
+    </div>
+    <div class="chapter-body open" id="body-ch1">
+      <div class="box box-blue">
+        <div class="tag">쉬운 비유</div>
+        <p>중고 컴퓨터를 싸게 사서 비싸게 파는 것처럼, 부동산(땅·건물·집)을 싸게 사서 비싸게 파는 걸 반복하면 그게 직업(사업)이 됩니다.</p>
+      </div>
+
+      <div class="section-label">일반인 vs 부동산매매업자</div>
+      <table class="tax-table">
+        <tr>
+          <th>구분</th>
+          <th>세금 종류</th>
+          <th>어떻게 내나?</th>
+        </tr>
+        <tr>
+          <td>일반인이 가끔 팜</td>
+          <td><span class="badge badge-blue">양도소득세</span></td>
+          <td>한 번 팔고 끝</td>
+        </tr>
+        <tr>
+          <td>사업으로 계속 팜</td>
+          <td><span class="badge badge-red">종합소득세</span></td>
+          <td>사업소득으로 매년 신고</td>
+        </tr>
+      </table>
+
+      <div class="box box-amber">
+        <div class="tag">언제 사업자가 되나?</div>
+        <p>1년(1과세기간) 안에 1번 이상 사고 2번 이상 팔면 세법상 부동산매매업자로 봅니다. 거래가 없다고 사업자가 아닌 것은 아님!</p>
+      </div>
+
+      <div class="section-label">왜 구분이 중요한가?</div>
+      <div class="card-grid">
+        <div class="info-card">
+          <div class="label">양도소득세</div>
+          <div class="value">분리 과세</div>
+          <div class="desc">다른 소득과 합산 안 됨. 세율 6~45%</div>
+        </div>
+        <div class="info-card">
+          <div class="label">종합소득세</div>
+          <div class="value">합산 과세</div>
+          <div class="desc">다른 소득 다 합산. 소득 클수록 세율 높아짐</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CH2 -->
+  <div class="chapter ch2" id="ch2">
+    <div class="chapter-header" onclick="toggle('ch2')">
+      <div class="chapter-icon">📋</div>
+      <div class="chapter-title">
+        <h2>2장. 살 때 내는 세금 — 취득세</h2>
+        <p>부동산을 구입하는 순간 내야 하는 세금</p>
+      </div>
+      <div class="toggle-btn" id="btn-ch2">▽</div>
+    </div>
+    <div class="chapter-body" id="body-ch2">
+      <div class="box box-blue">
+        <div class="tag">쉬운 비유</div>
+        <p>편의점에서 물건 사면 부가세(10%)가 붙듯이, 부동산을 살 때도 나라에 "취득세"를 냅니다. 부동산 가격의 몇 %를 바로 냅니다.</p>
+      </div>
+
+      <div class="section-label">주택 취득세율 (일반)</div>
+      <table class="tax-table">
+        <tr>
+          <th>보유 주택 수</th>
+          <th>지역</th>
+          <th>취득세율</th>
+          <th>총 부담</th>
+        </tr>
+        <tr>
+          <td>1주택 (6억 이하)</td>
+          <td>-</td>
+          <td><span class="badge badge-green">1%</span></td>
+          <td>약 1.1%</td>
+        </tr>
+        <tr>
+          <td>1주택 (9억 초과)</td>
+          <td>-</td>
+          <td><span class="badge badge-blue">3%</span></td>
+          <td>약 3.5%</td>
+        </tr>
+        <tr>
+          <td>2주택</td>
+          <td>조정대상지역</td>
+          <td><span class="badge badge-amber">8%</span></td>
+          <td>약 8.4%</td>
+        </tr>
+        <tr>
+          <td>3주택 이상</td>
+          <td>조정대상지역</td>
+          <td><span class="badge badge-red">12%</span></td>
+          <td>약 12.4%</td>
+        </tr>
+      </table>
+
+      <div class="box box-amber">
+        <div class="tag">중과세 주의</div>
+        <p>집을 여러 채 살수록 취득세율이 확 올라갑니다. 3주택자가 조정대상지역에서 집을 사면 12%! 5억짜리 집이면 취득세만 6,000만원 😱</p>
+      </div>
+
+      <div class="section-label">일반 부동산 취득세율</div>
+      <table class="tax-table">
+        <tr>
+          <th>구분</th>
+          <th>세율</th>
+        </tr>
+        <tr>
+          <td>토지·건물 유상취득</td>
+          <td>4.0% (지방교육세 등 포함 4.6%)</td>
+        </tr>
+        <tr>
+          <td>농지 유상취득</td>
+          <td>3.0% (포함 3.4%)</td>
+        </tr>
+        <tr>
+          <td>원시취득 (건축)</td>
+          <td>2.8% (포함 3.16%)</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- CH3 -->
+  <div class="chapter ch3" id="ch3">
+    <div class="chapter-header" onclick="toggle('ch3')">
+      <div class="chapter-icon">💰</div>
+      <div class="chapter-title">
+        <h2>3장. 팔 때 내는 세금 — 양도세·사업소득</h2>
+        <p>부동산을 팔아서 이익이 생기면 내는 세금</p>
+      </div>
+      <div class="toggle-btn" id="btn-ch3">▽</div>
+    </div>
+    <div class="chapter-body" id="body-ch3">
+      <div class="box box-blue">
+        <div class="tag">쉬운 비유</div>
+        <p>3억에 산 집을 5억에 팔았다면 차익이 2억원. 이 이익에 세금을 냅니다. 단기간에 팔수록 세율이 높아져요. 1년내에 팔면 양도세가 자그만치 70%! 단, 매매사업자를 내면 일반과세입니다. 그런데, 규제지역에서는 비교과세를 해요. 양도세와 사업소득세중 더 높은 금액을 내야하지요. 무주택자만 비교과세를 안해요. 무주택자는 서울에서 단기매도 일반과세인거지요. 덕분에 무주택자는 경쟁없이 단기매매를 하고 있어요!</p>
+      </div>
+
+      <div class="section-label">세금 계산 순서</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-line">
+            <div class="step-num" style="background:#C4DDD0;color:#1D4D33;">1</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h3>양도가액 (판 금액)</h3>
+            <p>예: 5억원에 팔았다면 → 5억원</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-line">
+            <div class="step-num" style="background:#B8CDE8;color:#1C3F6E;">2</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h3>— 취득가액 및 필요경비</h3>
+            <p>산 금액 3억 + 취득세·수리비·중개수수료 등</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-line">
+            <div class="step-num" style="background:#EDD4A8;color:#7A4F10;">3</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h3>= 양도차익</h3>
+            <p>예: 5억 - 3억 2천만 = 1억 8천만원</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-line">
+            <div class="step-num" style="background:#D8C4E8;color:#4A2070;">4</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h3>— 장기보유특별공제</h3>
+            <p>오래 보유할수록 공제 혜택이 있어요</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-line">
+            <div class="step-num" style="background:#E8C4B0;color:#7A2A10;">5</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h3>× 세율 = 납부세액</h3>
+            <p>기본세율 6~45% 적용</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">보유기간별 세율</div>
+      <table class="tax-table">
+        <tr>
+          <th>보유기간</th>
+          <th>주택·조합원입주권</th>
+          <th>일반 부동산</th>
+        </tr>
+        <tr>
+          <td>1년 미만</td>
+          <td><span class="badge badge-red">70%</span></td>
+          <td><span class="badge badge-red">50%</span></td>
+        </tr>
+        <tr>
+          <td>1년 이상~2년 미만</td>
+          <td><span class="badge badge-amber">60%</span></td>
+          <td><span class="badge badge-amber">40%</span></td>
+        </tr>
+        <tr>
+          <td>2년 이상</td>
+          <td colspan="2"><span class="badge badge-green">기본세율 (6~45%)</span></td>
+        </tr>
+      </table>
+
+      <div class="box box-amber">
+        <div class="tag">다주택자 중과</div>
+        <p>조정대상지역에서 파는 경우: 2주택자 +20%p / 3주택자 +30%p 추가 세율이 붙습니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CH4 -->
+  <div class="chapter ch4" id="ch4">
+    <div class="chapter-header" onclick="toggle('ch4')">
+      <div class="chapter-icon">🔢</div>
+      <div class="chapter-title">
+        <h2>4장. 부가가치세</h2>
+        <p>상가·비주거용 부동산에만 붙는 세금</p>
+      </div>
+      <div class="toggle-btn" id="btn-ch4">▽</div>
+    </div>
+    <div class="chapter-body" id="body-ch4">
+      <div class="box box-blue">
+        <div class="tag">쉬운 비유</div>
+        <p>편의점 영수증에 "부가세 포함"이라고 적혀있죠? 상가 건물을 살 때도 건물값의 10%를 부가가치세로 냅니다. 단, 주택은 면세!</p>
+      </div>
+
+      <div class="section-label">과세 vs 면세 한눈에 보기</div>
+      <table class="tax-table">
+        <tr>
+          <th>종류</th>
+          <th>임대</th>
+          <th>매매(공급)</th>
+        </tr>
+        <tr>
+          <td>주택 + 부수토지</td>
+          <td><span class="badge badge-green">면세</span></td>
+          <td><span class="badge badge-green">면세 (국민주택)</span></td>
+        </tr>
+        <tr>
+          <td>상가 + 부수토지</td>
+          <td><span class="badge badge-red">과세 (10%)</span></td>
+          <td><span class="badge badge-red">과세 (건물분 10%)</span></td>
+        </tr>
+        <tr>
+          <td>토지</td>
+          <td>-</td>
+          <td><span class="badge badge-green">무조건 면세</span></td>
+        </tr>
+        <tr>
+          <td>국민주택 초과 주택</td>
+          <td><span class="badge badge-green">면세</span></td>
+          <td><span class="badge badge-amber">과세 (건물분 10%)</span></td>
+        </tr>
+      </table>
+
+      <div class="box box-green">
+        <div class="tag">핵심 정리</div>
+        <p>토지는 항상 부가세 없음. 상가 건물을 살 때는 건물값의 10%를 부가세로 추가로 내야 합니다. 꼭 미리 계산해두세요!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CH5 -->
+  <div class="chapter ch5" id="ch5">
+    <div class="chapter-header" onclick="toggle('ch5')">
+      <div class="chapter-icon">📅</div>
+      <div class="chapter-title">
+        <h2>5장. 매매차익 신고 방법</h2>
+        <p>언제, 어떻게 세금을 신고하고 내나?</p>
+      </div>
+      <div class="toggle-btn" id="btn-ch5">▽</div>
+    </div>
+    <div class="chapter-body" id="body-ch5">
+      <div class="box box-blue">
+        <div class="tag">쉬운 비유</div>
+        <p>중간고사(예정신고)를 보고, 기말고사(확정신고)로 최종 성적을 내는 것처럼 세금도 두 번 신고합니다.</p>
+      </div>
+
+      <div class="section-label">신고 2단계</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-line">
+            <div class="step-num" style="background:#E8C4B0;color:#7A2A10;">1</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h3>예정신고 (판 달의 말일 + 2개월 안에)</h3>
+            <p>부동산을 판 달 기준으로 2개월 안에 먼저 신고하고 세금도 냅니다. 차손(손해)이 나도 신고해야 합니다!</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-line">
+            <div class="step-num" style="background:#E8C4B0;color:#7A2A10;">2</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h3>확정신고 (다음해 5월 31일까지)</h3>
+            <p>1년치 소득을 다 모아 종합소득세로 최종 정산. 예정신고 때 낸 세금은 공제됩니다. 성실신고확인 대상자는 6월 30일까지.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">확정신고 시 추가 공제 가능한 비용들</div>
+      <div class="card-grid">
+        <div class="info-card">
+          <div class="label">일반관리비</div>
+          <div class="value">임대료·인건비</div>
+          <div class="desc">사무실 운영 비용</div>
+        </div>
+        <div class="info-card">
+          <div class="label">대출 이자</div>
+          <div class="value">이자비용</div>
+          <div class="desc">부동산 취득용 대출 이자</div>
+        </div>
+        <div class="info-card">
+          <div class="label">세금·공과금</div>
+          <div class="value">업무관련 세금</div>
+          <div class="desc">재산세 등 업무 관련분</div>
+        </div>
+      </div>
+
+      <div class="box box-green">
+        <div class="tag">핵심 포인트</div>
+        <p>부동산매매업자의 최종 세금 = Max(①일반산출세액, ②비교산출세액) 중 더 높은 것을 냅니다. 1년에 여러채를 사고 팔아 수익이 1억이 넘으면 과세구간도 오르고 다음해 확정신고시 세금이 더 나올수 있어요.</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p style="font-size:14px;color:#2B5C3F;font-weight:700;margin-bottom:6px;">세금, 알면 두렵지 않습니다 🌱</p>
+  <p style="font-size:12px;color:#8A8A7A;line-height:1.7;">경매로 내 자산을 키워가는 여정, 오늘도 한 걸음씩 나아가고 있는 여러분을 응원합니다.<br>이현정의 부동산경매 매매사업자 가이드북 · 2026</p>
+</footer>
+
+<script>
+function toggle(id) {
+  const body = document.getElementById('body-' + id);
+  const btn = document.getElementById('btn-' + id);
+  const isOpen = body.classList.contains('open');
+  if (isOpen) {
+    body.classList.remove('open');
+    btn.classList.remove('open');
+  } else {
+    body.classList.add('open');
+    btn.classList.add('open');
+  }
+}
+</script>
+</body>
+</html>
