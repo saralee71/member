@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내집 이자 계산기</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #F4F1EC;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .card {
+    background: #FFFFFF;
+    border-radius: 20px;
+    padding: 40px 44px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.07);
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .logo-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #E07B39;
+  }
+
+  .title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1A1A1A;
+    letter-spacing: -0.3px;
+  }
+
+  .badge {
+    margin-left: auto;
+    font-size: 11px;
+    color: #888;
+    background: #F4F1EC;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  .section-box {
+    background: #F9F8F6;
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 500;
+    color: #AAAAAA;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+
+  .slider-row:last-child { margin-bottom: 0; }
+
+  .slider-label {
+    font-size: 13px;
+    color: #666;
+    min-width: 68px;
+    font-weight: 400;
+  }
+
+  input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    background: #E8E4DC;
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    border: 2px solid #E07B39;
+    box-shadow: 0 1px 6px rgba(224,123,57,0.25);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+
+  input[type=range]::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+  }
+
+  .slider-val {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1A1A1A;
+    min-width: 80px;
+    text-align: right;
+  }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .result-item {
+    background: #F9F8F6;
+    border-radius: 14px;
+    padding: 20px 18px;
+  }
+
+  .result-item.accent {
+    background: #E07B39;
+  }
+
+  .result-label {
+    font-size: 11px;
+    color: #AAAAAA;
+    font-weight: 400;
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+
+  .result-item.accent .result-label {
+    color: rgba(255,255,255,0.75);
+  }
+
+  .result-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1A1A1A;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+
+  .result-item.accent .result-value {
+    color: #FFFFFF;
+  }
+
+  .result-sub {
+    font-size: 11px;
+    color: #BBBBBB;
+    margin-top: 6px;
+    font-weight: 400;
+  }
+
+  .result-item.accent .result-sub {
+    color: rgba(255,255,255,0.6);
+  }
+
+  @media (max-width: 480px) {
+    .card { padding: 28px 20px; }
+    .result-grid { grid-template-columns: 1fr; }
+    .result-value { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <div class="header">
+    <div class="logo-dot"></div>
+    <span class="title">경매 자금 계산기</span>
+    <span class="badge">원리금균등상환</span>
+  </div>
+
+  <!-- 슬라이더 섹션 -->
+  <div class="section-box">
+    <div class="section-title">조건 설정</div>
+
+    <div class="slider-row">
+      <span class="slider-label">집값</span>
+      <input type="range" id="price" min="5000" max="100000" step="1000" value="30000">
+      <span class="slider-val" id="price-out">3억원</span>
+    </div>
+
+    <div class="slider-row">
+      <span class="slider-label">LTV 비율</span>
+      <input type="range" id="ltv" min="40" max="90" step="5" value="80">
+      <span class="slider-val" id="ltv-out">80%</span>
+    </div>
+
+    <div class="slider-row">
+      <span class="slider-label">연이율</span>
+      <input type="range" id="rate" min="10" max="80" step="1" value="40">
+      <span class="slider-val" id="rate-out">4.0%</span>
+    </div>
+
+    <div class="slider-row">
+      <span class="slider-label">대출 기간</span>
+      <input type="range" id="years" min="10" max="40" step="5" value="30">
+      <span class="slider-val" id="years-out">30년</span>
+    </div>
+  </div>
+
+  <!-- 결과 섹션 -->
+  <div class="result-grid">
+    <div class="result-item">
+      <div class="result-label">내 돈<br>(자기자본)</div>
+      <div class="result-value" id="equity">6,000만원</div>
+      <div class="result-sub" id="equity-pct">집값의 20%</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">대출금액</div>
+      <div class="result-value" id="loan">2억 4,000만원</div>
+      <div class="result-sub" id="loan-pct">집값의 80%</div>
+    </div>
+    <div class="result-item accent">
+      <div class="result-label">월 납입금</div>
+      <div class="result-value" id="monthly">115만원</div>
+      <div class="result-sub">월 납입 기준</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function fmt(n) {
+    const oku = Math.floor(n / 10000);
+    const man = Math.round(n % 10000);
+    if (oku > 0 && man > 0) return oku + '억 ' + man.toLocaleString('ko-KR') + '만원';
+    if (oku > 0) return oku + '억원';
+    return man.toLocaleString('ko-KR') + '만원';
+  }
+
+  function calcMonthly(principal, annualRate, years) {
+    const r = annualRate / 100 / 12;
+    const n = years * 12;
+    if (r === 0) return principal / n;
+    return principal * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+  }
+
+  function update() {
+    const priceVal = +document.getElementById('price').value;
+    const ltvVal   = +document.getElementById('ltv').value;
+    const rateVal  = +document.getElementById('rate').value / 10;
+    const yearsVal = +document.getElementById('years').value;
+
+    document.getElementById('price-out').textContent = fmt(priceVal);
+    document.getElementById('ltv-out').textContent   = ltvVal + '%';
+    document.getElementById('rate-out').textContent  = rateVal.toFixed(1) + '%';
+    document.getElementById('years-out').textContent = yearsVal + '년';
+
+    const loanAmt = Math.round(priceVal * ltvVal / 100);
+    const equityAmt = priceVal - loanAmt;
+    const monthlyPayment = calcMonthly(loanAmt * 10000, rateVal, yearsVal);
+    const monthlyMan = Math.round(monthlyPayment / 10000);
+
+    document.getElementById('equity').textContent   = fmt(equityAmt);
+    document.getElementById('equity-pct').textContent = '집값의 ' + (100 - ltvVal) + '%';
+    document.getElementById('loan').textContent     = fmt(loanAmt);
+    document.getElementById('loan-pct').textContent = '집값의 ' + ltvVal + '%';
+    document.getElementById('monthly').textContent  = monthlyMan.toLocaleString('ko-KR') + '만원';
+  }
+
+  ['price','ltv','rate','years'].forEach(id => {
+    document.getElementById(id).addEventListener('input', update);
+  });
+
+  update();
+</script>
+
+</body>
+</html>
