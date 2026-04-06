@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이현정의 AI 단기매도 수익률계산기 — JOYFUL ACADEMY</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+:root {
+  --bg: #f5f4f0;
+  --white: #ffffff;
+  --text: #1a1a1a;
+  --text-muted: #6b6b6b;
+  --text-hint: #a0a0a0;
+  --border: #e0ddd6;
+  --border-focus: #c8a96e;
+  --accent: #c8a96e;
+  --accent-light: #f7f0e4;
+  --success-bg: #eaf4ee;
+  --success: #2a7a47;
+  --danger-bg: #fdecea;
+  --danger: #c0392b;
+  --info-bg: #eaf0fb;
+  --info: #2355a0;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+.page-header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 24px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.logo-badge {
+  background: var(--accent);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  letter-spacing: .06em;
+}
+.header-titles { flex: 1; }
+.header-titles h1 { font-size: 17px; font-weight: 700; }
+.header-titles p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+.container { max-width: 860px; margin: 0 auto; padding: 24px 16px 60px; }
+
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 14px;
+}
+.sec-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.g4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+
+@media (max-width: 600px) {
+  .g4 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 380px) {
+  .g2, .g3, .g4 { grid-template-columns: 1fr; }
+}
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+.hint { font-size: 11px; color: var(--text-hint); }
+
+.unit { position: relative; }
+.unit .sfx {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  font-size: 12px; color: var(--text-hint); pointer-events: none;
+}
+
+input.fi, input.fi-pct, input.fi-text {
+  width: 100%; height: 36px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0 10px;
+  font-size: 13px;
+  font-family: 'Noto Sans KR', sans-serif;
+  background: #faf9f7;
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s;
+}
+input.fi { padding-right: 28px; }
+input.fi-pct { padding-right: 28px; }
+input:focus { border-color: var(--border-focus); background: var(--white); }
+input.auto {
+  background: #f5f4f0;
+  color: var(--text-hint);
+  cursor: default;
+}
+
+.ratio-bar {
+  font-size: 12px; color: var(--text-muted);
+  padding-top: 10px; margin-top: 4px;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.badge {
+  display: inline-block; font-size: 11px; padding: 2px 8px;
+  border-radius: 4px; font-weight: 500;
+}
+.badge-ok  { background: #e5f4ec; color: #2a7a47; }
+.badge-warn{ background: #fef3e2; color: #b05b00; }
+.badge-info{ background: var(--info-bg); color: var(--info); }
+
+.result-top {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;
+}
+.result-big {
+  border-radius: var(--radius-sm); padding: 16px 18px;
+}
+.result-big .rlbl { font-size: 11px; font-weight: 500; margin-bottom: 6px; }
+.result-big .rval { font-size: 26px; font-weight: 700; line-height: 1.2; }
+.result-big .rsub { font-size: 11px; margin-top: 5px; opacity: .75; }
+.pos { background: var(--success-bg); color: var(--success); }
+.neg { background: var(--danger-bg); color: var(--danger); }
+.neu { background: var(--info-bg); color: var(--info); }
+
+.tbl { width: 100%; border-collapse: collapse; }
+.tbl tr td { padding: 6px 2px; font-size: 13px; border-bottom: 1px solid var(--border); }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl .lbl { color: var(--text-muted); }
+.tbl .val { text-align: right; font-weight: 500; }
+.tbl .sub td { font-size: 12px; }
+.tbl .sub .lbl { color: var(--text-hint); padding-left: 12px; }
+.tbl .sub .val { color: var(--text-muted); font-weight: 400; }
+.tbl .sep td { padding-top: 10px; padding-bottom: 10px; border-bottom: 1.5px solid var(--border); }
+.tbl .sep .lbl { font-weight: 600; color: var(--text); }
+.tbl .sep .val { font-weight: 700; }
+
+.rev-box {
+  background: var(--accent-light);
+  border: 1px solid #e8d5ae;
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+  margin-top: 16px;
+}
+.rev-box h3 { font-size: 12px; font-weight: 700; color: #8a6a2a; margin-bottom: 12px; letter-spacing: .04em; }
+.rev-inputs { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.rev-inputs label { font-size: 12px; color: var(--text-muted); }
+.rev-inputs input {
+  height: 34px; border: 1px solid #dbc98a; border-radius: var(--radius-sm);
+  padding: 0 10px; font-size: 13px; background: var(--white); color: var(--text); outline: none;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.rev-inputs input:focus { border-color: var(--accent); }
+.rev-result { font-size: 13px; color: var(--text-muted); }
+.rev-result strong { font-size: 20px; font-weight: 700; color: var(--info); margin: 0 6px; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="logo-badge">JOYFUL</div>
+  <div class="header-titles">
+    <h1>이현정의 단기매도 수익률 계산기</h1>
+    <p>본 수익율계산기는 단순 참고용입니다. 도움이 되시길 바랍니다</p>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- 물건 정보 -->
+<div class="card">
+  <div class="sec-title">물건 정보</div>
+  <div class="g4">
+    <div class="field"><label>물건번호</label><input class="fi-text" id="caseNo" placeholder="예) 2024타경12345"></div>
+    <div class="field"><label>입찰일</label><input class="fi-text" type="date" id="bidDate"></div>
+    <div class="field"><label>작성자</label><input class="fi-text" id="author" placeholder="이름 또는 닉네임"></div>
+    <div class="field"><label>작성일</label><input class="fi-text" type="date" id="writeDate"></div>
+  </div>
+</div>
+
+<!-- 기본 정보 -->
+<div class="card">
+  <div class="sec-title">물건 기본 정보</div>
+  <div class="g4" style="margin-bottom:12px">
+    <div class="field"><label>감정가</label><div class="unit"><input class="fi" data-raw="200000000" id="appraisal"><span class="sfx">원</span></div></div>
+    <div class="field"><label>최저가</label><div class="unit"><input class="fi" data-raw="140000000" id="minBid"><span class="sfx">원</span></div></div>
+    <div class="field"><label>공시가</label><div class="unit"><input class="fi" data-raw="106000000" id="pubPrice"><span class="sfx">원</span></div></div>
+    <div class="field"><label>낙찰가 (입찰가)</label><div class="unit"><input class="fi" data-raw="152000000" id="bidPrice"><span class="sfx">원</span></div></div>
+  </div>
+  <div class="ratio-bar" id="bid-ratio-bar"></div>
+</div>
+
+<!-- 취득 비용 -->
+<div class="card">
+  <div class="sec-title">취득 비용</div>
+  <div class="g4" style="margin-bottom:12px">
+    <div class="field">
+      <label>취득세율</label>
+      <div class="unit"><input class="fi-pct" data-raw="1.1" id="acquRate"><span class="sfx">%</span></div>
+      <div class="hint">1주택 1.1% / 2주택↑ 3.3%</div>
+    </div>
+    <div class="field"><label>법무·등기비</label><div class="unit"><input class="fi" data-raw="1100000" id="regFee"><span class="sfx">원</span></div></div>
+    <div class="field"><label>명도비</label><div class="unit"><input class="fi" data-raw="0" id="evictFee"><span class="sfx">원</span></div></div>
+    <div class="field"><label>인테리어비</label><div class="unit"><input class="fi" data-raw="2000000" id="remoFee"><span class="sfx">원</span></div></div>
+  </div>
+  <div class="g2">
+    <div class="field"><label>기타비용 (미납공과금 등)</label><div class="unit"><input class="fi" data-raw="200000" id="miscFee"><span class="sfx">원</span></div></div>
+    <div class="field"><label>매도 중개수수료</label><div class="unit"><input class="fi" data-raw="700000" id="brokerFee"><span class="sfx">원</span></div></div>
+  </div>
+</div>
+
+<!-- 대출 & 보유 -->
+<div class="card">
+  <div class="sec-title">대출 & 보유 비용</div>
+  <div class="g4">
+    <div class="field">
+      <label>대출 비율</label>
+      <div class="unit"><input class="fi-pct" data-raw="80" id="loanRate"><span class="sfx">%</span></div>
+      <div class="hint">낙찰가 기준</div>
+    </div>
+    <div class="field">
+      <label>대출이자율 (연)</label>
+      <div class="unit"><input class="fi-pct" data-raw="5" id="loanAnnualRate"><span class="sfx">%</span></div>
+    </div>
+    <div class="field">
+      <label>보유 기간</label>
+      <div class="unit"><input class="fi-pct" data-raw="3" id="holdMonths"><span class="sfx">개월</span></div>
+    </div>
+    <div class="field">
+      <label>월 대출이자 (자동)</label>
+      <div class="unit"><input class="fi auto" id="loanIntDisplay" readonly><span class="sfx">원</span></div>
+      <div class="hint">대출금 × 연이율 ÷ 12</div>
+    </div>
+  </div>
+</div>
+
+<!-- 매도 조건 -->
+<div class="card">
+  <div class="sec-title">매도 조건 & 세금</div>
+  <div class="g3">
+    <div class="field">
+      <label>매도 희망가</label>
+      <div class="unit"><input class="fi" data-raw="175000000" id="salePrice"><span class="sfx">원</span></div>
+    </div>
+    <div class="field">
+      <label>사업소득세율</label>
+      <div class="unit"><input class="fi-pct" data-raw="15" id="taxRate"><span class="sfx">%</span></div>
+      <div class="hint">단기매도 사업자 기준</div>
+    </div>
+    <div class="field">
+      <label>과세표준 (자동계산)</label>
+      <div class="unit"><input class="fi auto" id="taxBaseDisplay" readonly><span class="sfx">원</span></div>
+      <div class="hint">양도차익 − 필요경비</div>
+    </div>
+  </div>
+</div>
+
+<!-- 결과 -->
+<div class="card">
+  <div class="sec-title">수익 분석 결과</div>
+
+  <div class="result-top">
+    <div class="result-big pos" id="r-profit">
+      <div class="rlbl">실수익 (세후)</div>
+      <div class="rval">—</div>
+      <div class="rsub">양도차익 − 사업소득세 − 전체비용</div>
+    </div>
+    <div class="result-big neu" id="r-roi">
+      <div class="rlbl">실수익률 (실투자금 대비)</div>
+      <div class="rval">—</div>
+      <div class="rsub">실투자금 기준</div>
+    </div>
+  </div>
+
+  <table class="tbl" id="resultTable"></table>
+
+  <!-- 역산 -->
+  <div class="rev-box">
+    <h3>역산 — 목표 수익률로 최대 입찰가 찾기</h3>
+    <div class="rev-inputs">
+      <label>목표 수익률</label>
+      <div class="unit" style="position:relative;display:inline-block">
+        <input data-raw="20" id="targetRoi" style="width:80px;padding-right:22px">
+        <span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text-hint)">%</span>
+      </div>
+      <label>매도 예상가</label>
+      <div class="unit" style="position:relative;display:inline-block">
+        <input data-raw="175000000" id="rev_salePrice" style="width:160px;padding-right:24px">
+        <span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text-hint)">원</span>
+      </div>
+    </div>
+    <div class="rev-result" id="reverseResult"></div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+const fmtComma = v => Math.round(v).toLocaleString('ko-KR');
+const pct = (v, d=2) => (v*100).toFixed(d) + '%';
+const getRaw = id => parseFloat(document.getElementById(id).dataset.raw) || 0;
+const formatWon = val => isNaN(val) ? '' : Math.round(val).toLocaleString('ko-KR');
+
+function initWon(el) {
+  el.value = formatWon(parseFloat(el.dataset.raw) || 0);
+  el.addEventListener('focus', function(){ this.value = this.dataset.raw || ''; this.select(); });
+  el.addEventListener('input', function(){ this.dataset.raw = this.value.replace(/[^0-9]/g,''); updateAll(); });
+  el.addEventListener('blur', function(){ this.value = formatWon(parseFloat(this.dataset.raw)||0); });
+}
+function initPct(el) {
+  el.value = parseFloat(el.dataset.raw) || 0;
+  el.addEventListener('input', function(){ this.dataset.raw = this.value; updateAll(); });
+}
+function initRevWon(el) {
+  el.value = formatWon(parseFloat(el.dataset.raw)||0);
+  el.addEventListener('focus', function(){ this.value = this.dataset.raw||''; this.select(); });
+  el.addEventListener('input', function(){ this.dataset.raw = this.value.replace(/[^0-9]/g,''); updateAll(); });
+  el.addEventListener('blur', function(){ this.value = formatWon(parseFloat(this.dataset.raw)||0); });
+}
+function initRevPct(el) {
+  el.value = parseFloat(el.dataset.raw)||0;
+  el.addEventListener('input', function(){ this.dataset.raw = this.value; updateAll(); });
+}
+
+document.querySelectorAll('.fi:not(.auto)').forEach(initWon);
+document.querySelectorAll('.fi-pct').forEach(initPct);
+initRevWon(document.getElementById('rev_salePrice'));
+initRevPct(document.getElementById('targetRoi'));
+
+document.getElementById('writeDate').value = new Date().toISOString().slice(0,10);
+
+function calcCore(bidPrice, salePrice) {
+  const acquRate = getRaw('acquRate')/100;
+  const regFee = getRaw('regFee'), evictFee = getRaw('evictFee');
+  const remoFee = getRaw('remoFee'), miscFee = getRaw('miscFee'), brokerFee = getRaw('brokerFee');
+  const loanRate = getRaw('loanRate')/100;
+  const loanAnnualRate = getRaw('loanAnnualRate')/100;
+  const holdMonths = getRaw('holdMonths');
+  const taxRate = getRaw('taxRate')/100;
+
+  const loan = bidPrice * loanRate;
+  const loanIntMonth = loan * loanAnnualRate / 12;
+  const loanIntTotal = loanIntMonth * holdMonths;
+  const acquTax = bidPrice * acquRate;
+  const totalCost = acquTax + regFee + evictFee + remoFee + miscFee;
+  const totalExpense = totalCost + brokerFee + loanIntTotal;
+  const realInvest = (bidPrice - loan) + totalCost + brokerFee;
+  const gainOnSale = salePrice - bidPrice;
+  const necessaryExpense = acquTax + regFee + evictFee + miscFee + loanIntTotal;
+  const taxableBase = gainOnSale - necessaryExpense;
+  const tax = taxableBase > 0 ? taxableBase * taxRate : 0;
+  const netProfit = gainOnSale - tax - totalExpense + remoFee;
+  const roi = realInvest > 0 ? netProfit / realInvest : 0;
+  return { acquTax, regFee, evictFee, remoFee, miscFee, brokerFee,
+    loan, loanIntMonth, loanIntTotal, totalCost, totalExpense,
+    realInvest, gainOnSale, necessaryExpense, taxableBase, tax,
+    netProfit, roi, loanRate, holdMonths, acquRate, taxRate,
+    loanAnnualRate: getRaw('loanAnnualRate') };
+}
+
+function row(lbl, val, sub) {
+  return `<tr class="${sub?'sub':''}"><td class="lbl">${lbl}</td><td class="val">${val}</td></tr>`;
+}
+function sep(lbl, val) {
+  return `<tr class="sep"><td class="lbl">${lbl}</td><td class="val">${val}</td></tr>`;
+}
+
+function updateAll() {
+  const bidPrice = getRaw('bidPrice'), salePrice = getRaw('salePrice');
+  const appraisal = getRaw('appraisal'), minBid = getRaw('minBid');
+  const r = calcCore(bidPrice, salePrice);
+
+  document.getElementById('loanIntDisplay').value = formatWon(r.loanIntMonth);
+  document.getElementById('taxBaseDisplay').value = formatWon(Math.max(0, r.taxableBase));
+
+  // 낙찰가율
+  if (appraisal > 0) {
+    const bidRatio = bidPrice/appraisal, minRatio = minBid/appraisal;
+    let badge = bidPrice < minBid
+      ? '<span class="badge badge-warn">최저가 미달</span>'
+      : bidRatio > 1.0
+        ? '<span class="badge badge-info">감정가 초과</span>'
+        : '<span class="badge badge-ok">적정 범위</span>';
+    document.getElementById('bid-ratio-bar').innerHTML =
+      `낙찰가율 <strong>${pct(bidRatio)}</strong> &nbsp;·&nbsp; 최저가율 ${pct(minRatio)} &nbsp;${badge}`;
+  }
+
+  // 결과 카드
+  const isPos = r.netProfit >= 0;
+  const profBox = document.getElementById('r-profit');
+  profBox.className = 'result-big ' + (isPos ? 'pos' : 'neg');
+  profBox.querySelector('.rval').textContent = fmtComma(r.netProfit) + '원';
+  const roiBox = document.getElementById('r-roi');
+  roiBox.querySelector('.rval').textContent = pct(r.roi);
+  roiBox.querySelector('.rsub').textContent = '실투자금 ' + fmtComma(r.realInvest) + '원 기준';
+
+  // 상세 테이블
+  document.getElementById('resultTable').innerHTML =
+    row('낙찰가', fmtComma(bidPrice)+'원') +
+    row('취득세 (' + (r.acquRate*100).toFixed(1) + '%)', fmtComma(r.acquTax)+'원', true) +
+    row('법무·등기비', fmtComma(r.regFee)+'원', true) +
+    row('명도비', fmtComma(r.evictFee)+'원', true) +
+    row('인테리어비', fmtComma(r.remoFee)+'원', true) +
+    row('기타비용', fmtComma(r.miscFee)+'원', true) +
+    row('매도 중개수수료', fmtComma(r.brokerFee)+'원', true) +
+    row('대출이자 (' + r.loanAnnualRate + '% × ' + r.holdMonths + '개월)', fmtComma(r.loanIntTotal)+'원', true) +
+    sep('총 비용 합계', fmtComma(r.totalExpense)+'원') +
+    row('대출금 (낙찰가 × ' + (r.loanRate*100).toFixed(0) + '%)', fmtComma(r.loan)+'원') +
+    sep('실투자금 (자기자금 + 비용)', fmtComma(r.realInvest)+'원') +
+    row('매도가', fmtComma(salePrice)+'원') +
+    row('양도차익 (매도가 − 낙찰가)', fmtComma(r.gainOnSale)+'원') +
+    row('과세표준 (양도차익 − 필요경비)', fmtComma(Math.max(0,r.taxableBase))+'원') +
+    sep('사업소득세 (' + (r.taxRate*100).toFixed(0) + '%)', fmtComma(r.tax)+'원');
+
+  calcReverse();
+}
+
+function calcReverse() {
+  const targetRoi = getRaw('targetRoi')/100;
+  const revSale = getRaw('rev_salePrice');
+  const appraisal = getRaw('appraisal');
+  let maxBid = 0;
+  for (let bid = 50000000; bid <= revSale * 1.1; bid += 100000) {
+    if (calcCore(bid, revSale).roi >= targetRoi) maxBid = bid;
+  }
+  const el = document.getElementById('reverseResult');
+  if (maxBid > 0) {
+    const ratio = appraisal > 0 ? maxBid/appraisal : 0;
+    el.innerHTML = `목표 <b>${(targetRoi*100).toFixed(0)}%</b> 달성 최대 입찰가 <strong>${fmtComma(maxBid)}원</strong>`
+      + (appraisal > 0 ? ` <span class="badge badge-info">감정가 대비 ${pct(ratio)}</span>` : '');
+  } else {
+    el.innerHTML = '<span style="color:#c0392b;font-size:12px">목표 수익률 달성이 어렵습니다. 매도가 또는 목표 수익률을 조정해 보세요.</span>';
+  }
+}
+
+updateAll();
+</script>
+</body>
+</html>
