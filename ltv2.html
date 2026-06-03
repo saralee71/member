@@ -168,6 +168,8 @@ body {
 .badge { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 100px; margin-left: 6px; }
 .badge-info { background: var(--accent-bg); color: var(--accent-text); }
 .badge-warn { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn-border); }
+.badge-apply { background: #E6F5EE; color: var(--success); border: 1px solid #A8DFC0; }
+.apply-val { color: var(--success) !important; }
 
 .note { font-size: 12px; color: var(--text-hint); line-height: 1.65; margin-top: 1rem; padding-top: .75rem; border-top: 1px solid var(--border); }
 .hidden { display: none; }
@@ -421,8 +423,10 @@ function calcNone() {
     regionLabel = curNoneRegion === 'reg' ? '규제지역' : '경기비규제';
   }
 
-  const base = Math.min(app, bid);
-  let limit = Math.round(base * rate / 100);
+  const byLtv = Math.round(app * rate / 100);
+  const byBid80 = Math.round(bid * 0.8);
+  let limit = Math.min(byLtv, byBid80);
+  const limitBase = byLtv <= byBid80 ? 'ltv' : 'bid80';
   let capped = false;
   if (cap && limit > cap) { limit = cap; capped = true; }
   const bidRatio = Math.round(bid / app * 100);
@@ -450,18 +454,22 @@ function calcNone() {
       <div class="result-row"><span class="rl">구분</span><span class="rv">${label} <span class="badge badge-info">${regionLabel}</span></span></div>
       <div class="result-row"><span class="rl">적용 LTV</span><span class="rv">${rate}%</span></div>
       <div class="result-row">
-        <span class="rl">기준 금액 (낮은 금액)</span>
-        <span class="rv">${fmtComma(base)}만원 <span style="color:var(--text-hint);font-weight:400">(${toKorUnit(base)})</span></span>
+        <span class="rl">① 감정가 × LTV ${rate}%</span>
+        <span class="rv${limitBase==='ltv' ? ' apply-val' : ''}">${fmtComma(byLtv)}만원 <span style="color:var(--text-hint);font-weight:400">(${toKorUnit(byLtv)})</span>${limitBase==='ltv' ? ' <span class="badge badge-apply">적용</span>' : ''}</span>
+      </div>
+      <div class="result-row">
+        <span class="rl">② 낙찰가 × 80%</span>
+        <span class="rv${limitBase==='bid80' ? ' apply-val' : ''}">${fmtComma(byBid80)}만원 <span style="color:var(--text-hint);font-weight:400">(${toKorUnit(byBid80)})</span>${limitBase==='bid80' ? ' <span class="badge badge-apply">적용</span>' : ''}</span>
       </div>
     </div>
     <div class="highlight-row ${capped ? 'warn-row' : ''}">
-      <span class="hl">최대 대출 한도${capped ? ' <span class="badge badge-warn">6억 한도 적용</span>' : ''}</span>
+      <span class="hl">최대 대출 한도 (①② 중 낮은 금액)${capped ? ' <span class="badge badge-warn">6억 한도 적용</span>' : ''}</span>
       <div class="hv-wrap">
         <span class="hv">${fmtComma(limit)}만원</span>
         <span class="hv-sub">${toKorUnit(limit)}</span>
       </div>
     </div>
-    ${capped ? '<p class="note" style="border-top:none;margin-top:.5rem">규제지역 생애최초·서민실수요자는 6억원 한도가 적용됩니다.</p>' : ''}
+    ${capped ? '<p class="note" style="border-top:none;margin-top:.5rem">규제지역 서민실수요자는 6억원 한도가 적용됩니다.</p>' : ''}
     <p class="note">※ 실제 한도는 금융기관 DSR 심사, 기존 부채, 소득 등에 따라 달라질 수 있습니다.</p>
     ${disclaimer}
   `;
