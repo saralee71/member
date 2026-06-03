@@ -409,11 +409,10 @@ function calcNone() {
 
   let rate, cap = null, label, regionLabel;
   if (curSpecial === 'first') {
-    rate = 80; label = '생애최초';
+    rate = 70; label = '생애최초';
     regionLabel = curNoneRegion === 'reg' ? '규제지역' : '경기비규제';
-    if (curNoneRegion === 'reg') cap = 60000;
   } else if (curSpecial === 'low') {
-    rate = 70; label = '서민실수요자';
+    rate = curNoneRegion === 'reg' ? 60 : 70; label = '서민실수요자';
     regionLabel = curNoneRegion === 'reg' ? '규제지역' : '경기비규제';
     if (curNoneRegion === 'reg') cap = 60000;
   } else {
