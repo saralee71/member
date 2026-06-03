@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>경락잔금대출 LTV 한도 계산기</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F7F6F2;
+  --surface: #FFFFFF;
+  --border: #E4E2DA;
+  --border-strong: #C8C5BB;
+  --text: #1A1917;
+  --text-muted: #6B6860;
+  --text-hint: #9E9C96;
+  --accent: #1A4FBF;
+  --accent-bg: #EEF3FF;
+  --accent-text: #0F3399;
+  --success: #0A6640;
+  --success-bg: #E6F5EE;
+  --danger: #B01C1C;
+  --danger-bg: #FDF0F0;
+  --danger-border: #F5C0C0;
+  --warn: #7A4A00;
+  --warn-bg: #FFF8EC;
+  --warn-border: #F0D080;
+  --mono: 'DM Mono', monospace;
+  --sans: 'Noto Sans KR', sans-serif;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 2rem 1rem 4rem;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.container { max-width: 600px; margin: 0 auto; }
+
+.header { margin-bottom: 2rem; }
+.header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+.header p { font-size: 13px; color: var(--text-muted); }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.step-label {
+  font-size: 11px; font-weight: 700; color: var(--text-hint);
+  letter-spacing: .08em; text-transform: uppercase; margin-bottom: 10px;
+}
+
+.seg { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.5rem; }
+.seg:last-child { margin-bottom: 0; }
+
+.seg button {
+  padding: 8px 18px; font-size: 13px; font-family: var(--sans); font-weight: 500;
+  border: 1px solid var(--border); border-radius: 100px; background: var(--bg);
+  color: var(--text-muted); cursor: pointer; transition: all .15s;
+}
+.seg button:hover:not(.on) { border-color: var(--border-strong); color: var(--text); }
+.seg button.on { background: var(--text); color: #fff; border-color: var(--text); }
+
+.divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
+
+.field { margin-bottom: 1rem; }
+.field:last-child { margin-bottom: 0; }
+.field label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; letter-spacing: .02em; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* 입력 필드 */
+.input-wrap { position: relative; }
+.input-wrap input {
+  width: 100%;
+  padding: 10px 44px 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 15px; font-family: var(--mono);
+  background: var(--bg); color: var(--text);
+  transition: border-color .15s; outline: none;
+}
+.input-wrap input:focus { border-color: var(--accent); background: #fff; }
+.input-wrap input::placeholder { color: var(--text-hint); }
+.input-wrap .suffix {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  font-size: 12px; color: var(--text-hint); pointer-events: none;
+}
+
+/* 억단위 미리보기 */
+.unit-preview {
+  margin-top: 5px;
+  font-size: 12px;
+  color: var(--accent-text);
+  font-weight: 500;
+  min-height: 18px;
+  letter-spacing: -0.01em;
+}
+
+.calc-btn {
+  width: 100%; margin-top: 1.25rem; padding: 12px;
+  font-size: 14px; font-weight: 700; font-family: var(--sans); letter-spacing: .02em;
+  border: none; border-radius: var(--radius-sm);
+  background: var(--text); color: #fff; cursor: pointer; transition: opacity .15s;
+}
+.calc-btn:hover { opacity: .85; }
+.calc-btn:active { opacity: .7; }
+
+.alert { border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
+.alert-danger { background: var(--danger-bg); border: 1px solid var(--danger-border); }
+.alert-danger .alert-title { font-size: 14px; font-weight: 700; color: var(--danger); margin-bottom: 6px; }
+.alert-danger .alert-desc { font-size: 13px; color: #8B1414; line-height: 1.65; }
+.alert-info { background: var(--accent-bg); border: 1px solid #C0D0F5; }
+.alert-info .alert-title { font-size: 14px; font-weight: 700; color: var(--accent-text); margin-bottom: 6px; }
+.alert-info .alert-desc { font-size: 13px; color: #1A4FBF; line-height: 1.65; }
+
+.result-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.5rem; margin-top: 1rem; display: none;
+}
+.result-card.show { display: block; }
+
+.metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.25rem; }
+.metric { background: var(--bg); border-radius: var(--radius-sm); padding: .75rem; }
+.metric .ml { font-size: 11px; color: var(--text-hint); margin-bottom: 2px; font-weight: 500; letter-spacing: .02em; }
+.metric .mv { font-size: 15px; font-weight: 700; font-family: var(--mono); color: var(--text); }
+.metric .mv.ok { color: var(--success); }
+.metric .mv.warn { color: var(--warn); }
+.metric .msub { font-size: 11px; color: var(--text-hint); margin-top: 2px; }
+
+.result-rows { border-top: 1px solid var(--border); }
+.result-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0; border-bottom: 1px solid var(--border); gap: 12px;
+}
+.result-row:last-child { border-bottom: none; }
+.result-row .rl { font-size: 13px; color: var(--text-muted); flex-shrink: 0; }
+.result-row .rv { font-size: 13px; font-weight: 500; text-align: right; }
+
+.highlight-row {
+  background: var(--success-bg); border-radius: var(--radius-sm);
+  padding: 14px 16px; margin-top: 1rem;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.highlight-row.warn-row { background: var(--warn-bg); }
+.highlight-row .hl { font-size: 13px; color: var(--success); font-weight: 500; }
+.highlight-row.warn-row .hl { color: var(--warn); }
+.highlight-row .hv-wrap { text-align: right; }
+.highlight-row .hv {
+  font-size: 22px; font-weight: 700; font-family: var(--mono);
+  color: var(--success); letter-spacing: -.02em; display: block;
+}
+.highlight-row.warn-row .hv { color: var(--warn); }
+.highlight-row .hv-sub { font-size: 12px; color: var(--success); margin-top: 1px; display: block; }
+.highlight-row.warn-row .hv-sub { color: var(--warn); }
+
+.badge { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 100px; margin-left: 6px; }
+.badge-info { background: var(--accent-bg); color: var(--accent-text); }
+.badge-warn { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn-border); }
+
+.note { font-size: 12px; color: var(--text-hint); line-height: 1.65; margin-top: 1rem; padding-top: .75rem; border-top: 1px solid var(--border); }
+.hidden { display: none; }
+
+.disclaimer-box {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+  background: #F7F6F2;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+}
+.disclaimer-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.disclaimer-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+.disclaimer-text strong {
+  color: var(--text);
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>경락잔금대출 LTV 한도 계산기</h1>
+    <p>주택 경매 낙찰 시 대출 가능 한도를 산출합니다</p>
+  </div>
+
+  <div class="card">
+    <div class="step-label">Step 1 &nbsp;구분 선택</div>
+    <div class="seg" id="seg-type">
+      <button class="on" onclick="setType(this,'none')">무주택자</button>
+      <button onclick="setType(this,'own1plus')">1주택 이상</button>
+      <button onclick="setType(this,'biz')">매매사업자</button>
+    </div>
+
+    <!-- 무주택자 -->
+    <div id="section-none">
+      <div class="divider"></div>
+      <div class="step-label">Step 2 &nbsp;특례 선택</div>
+      <div class="seg" id="seg-special">
+        <button class="on" onclick="setSpecial(this,'first')">생애최초</button>
+        <button onclick="setSpecial(this,'low')">서민실수요자</button>
+        <button onclick="setSpecial(this,'general')">일반</button>
+      </div>
+      <div id="none-region-wrap" class="hidden">
+        <div class="step-label">Step 3 &nbsp;지역 선택</div>
+        <div class="seg" id="seg-region-none">
+          <button class="on" onclick="setNoneRegion(this,'reg')">규제지역</button>
+          <button onclick="setNoneRegion(this,'gyeonggi')">경기비규제</button>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="field-row">
+        <div class="field">
+          <label>감정가</label>
+          <div class="input-wrap">
+            <input type="text" id="none-appraisal" placeholder="예) 50,000" oninput="handleInput(this,'none-appraisal-preview')" inputmode="numeric">
+            <span class="suffix">만원</span>
+          </div>
+          <div class="unit-preview" id="none-appraisal-preview"></div>
+        </div>
+        <div class="field">
+          <label>낙찰가</label>
+          <div class="input-wrap">
+            <input type="text" id="none-bid" placeholder="예) 43,000" oninput="handleInput(this,'none-bid-preview')" inputmode="numeric">
+            <span class="suffix">만원</span>
+          </div>
+          <div class="unit-preview" id="none-bid-preview"></div>
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcNone()">한도 계산하기</button>
+    </div>
+
+    <!-- 1주택 이상 -->
+    <div id="section-own1plus" class="hidden">
+      <div class="divider"></div>
+      <div class="alert alert-danger">
+        <div class="alert-title">수도권 경락잔금대출 불가</div>
+        <div class="alert-desc">1주택 이상 보유자는 규제지역·경기비규제 등 수도권 전 지역에서 경락잔금대출이 불가합니다.</div>
+      </div>
+      <div class="alert alert-info">
+        <div class="alert-title">지방은 매매사업자 대출 가능</div>
+        <div class="alert-desc">지방 물건은 매매사업자 대출로 낙찰가 80% / 감정가 60% 한도 대출이 가능합니다.<br>위 <strong>매매사업자</strong> 탭을 선택해 계산하세요.</div>
+      </div>
+    </div>
+
+    <!-- 매매사업자 -->
+    <div id="section-biz" class="hidden">
+      <div class="divider"></div>
+      <div class="step-label">Step 2 &nbsp;지역 선택</div>
+      <div class="seg" id="seg-region-biz">
+        <button class="on" onclick="setBizRegion(this,'metro')">수도권</button>
+        <button onclick="setBizRegion(this,'local')">지방</button>
+      </div>
+      <div id="biz-block" class="alert alert-danger">
+        <div class="alert-title">수도권 불가</div>
+        <div class="alert-desc">매매사업자 대출은 수도권에서 불가합니다. 지방 물건만 가능합니다.</div>
+      </div>
+      <div id="biz-form" class="hidden">
+        <div class="divider"></div>
+        <div class="field-row">
+          <div class="field">
+            <label>감정가</label>
+            <div class="input-wrap">
+              <input type="text" id="biz-appraisal" placeholder="예) 20,000" oninput="handleInput(this,'biz-appraisal-preview')" inputmode="numeric">
+              <span class="suffix">만원</span>
+            </div>
+            <div class="unit-preview" id="biz-appraisal-preview"></div>
+          </div>
+          <div class="field">
+            <label>낙찰가</label>
+            <div class="input-wrap">
+              <input type="text" id="biz-bid" placeholder="예) 17,000" oninput="handleInput(this,'biz-bid-preview')" inputmode="numeric">
+              <span class="suffix">만원</span>
+            </div>
+            <div class="unit-preview" id="biz-bid-preview"></div>
+          </div>
+        </div>
+        <button class="calc-btn" onclick="calcBiz()">한도 계산하기</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-card" id="none-result"></div>
+  <div class="result-card" id="biz-result"></div>
+</div>
+
+<script>
+let curSpecial = 'first';
+let curNoneRegion = 'reg';
+let curBizRegion = 'metro';
+
+const disclaimer = `
+  <div class="disclaimer-box">
+    <div class="disclaimer-icon">📋</div>
+    <div class="disclaimer-text">
+      <strong>참고용 계산 결과 안내</strong><br>
+      본 계산기는 경락잔금대출 한도를 간편하게 확인하기 위한 <strong>단순 참고용</strong>입니다.
+      실제 대출 가능 여부 및 한도는 금융기관의 심사 기준, 정부 정책 변경, 지역 규제 현황,
+      개인 신용 및 소득 조건에 따라 달라질 수 있으며 현장에서 차이가 발생할 수 있습니다.<br>
+      정확한 대출 조건은 반드시 해당 금융기관 또는 전문가와 상담하시기 바랍니다.
+    </div>
+  </div>
+`;
+
+// ── 숫자 유틸 ──────────────────────────────────────────
+function toNum(str) {
+  return parseFloat(str.replace(/,/g, '')) || 0;
+}
+
+function fmtComma(n) {
+  return Math.round(n).toLocaleString('ko-KR');
+}
+
+// 만원 → "N억 M,000만원" 한국어 단위 변환
+function toKorUnit(manwon) {
+  if (!manwon || manwon <= 0) return '';
+  const eok = Math.floor(manwon / 10000);
+  const man = manwon % 10000;
+  let parts = [];
+  if (eok > 0) parts.push(fmtComma(eok) + '억');
+  if (man > 0) parts.push(fmtComma(man) + '만');
+  return parts.join(' ') + '원';
+}
+
+// 입력 시: 쉼표 자동 삽입 + 억단위 미리보기
+function handleInput(input, previewId) {
+  const raw = input.value.replace(/,/g, '').replace(/[^0-9]/g, '');
+  if (raw === '') {
+    input.value = '';
+    document.getElementById(previewId).textContent = '';
+    return;
+  }
+  const num = parseInt(raw, 10);
+  input.value = num.toLocaleString('ko-KR');
+  document.getElementById(previewId).textContent = '= ' + toKorUnit(num);
+}
+
+// 결과에 쓸 포맷: "50,000만원 (5억원)"
+function fmtResult(manwon) {
+  return fmtComma(manwon) + '만원';
+}
+function fmtResultSub(manwon) {
+  return toKorUnit(manwon);
+}
+
+// ── 탭 / 선택 ──────────────────────────────────────────
+function setType(el, v) {
+  document.querySelectorAll('#seg-type button').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('section-none').classList.toggle('hidden', v !== 'none');
+  document.getElementById('section-own1plus').classList.toggle('hidden', v !== 'own1plus');
+  document.getElementById('section-biz').classList.toggle('hidden', v !== 'biz');
+  document.getElementById('none-result').classList.remove('show');
+  document.getElementById('biz-result').classList.remove('show');
+}
+
+function setSpecial(el, v) {
+  curSpecial = v;
+  document.querySelectorAll('#seg-special button').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('none-region-wrap').classList.toggle('hidden', v !== 'general');
+  document.getElementById('none-result').classList.remove('show');
+}
+
+function setNoneRegion(el, v) {
+  curNoneRegion = v;
+  document.querySelectorAll('#seg-region-none button').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('none-result').classList.remove('show');
+}
+
+function setBizRegion(el, v) {
+  curBizRegion = v;
+  document.querySelectorAll('#seg-region-biz button').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  const metro = (v === 'metro');
+  document.getElementById('biz-block').style.display = metro ? 'block' : 'none';
+  document.getElementById('biz-form').classList.toggle('hidden', metro);
+  document.getElementById('biz-result').classList.remove('show');
+}
+
+// ── 계산 ──────────────────────────────────────────────
+function calcNone() {
+  const app = toNum(document.getElementById('none-appraisal').value);
+  const bid = toNum(document.getElementById('none-bid').value);
+  if (!app || !bid) { alert('감정가와 낙찰가를 입력하세요.'); return; }
+
+  let rate, cap = null, label, regionLabel;
+  if (curSpecial === 'first') {
+    rate = 80; label = '생애최초';
+    regionLabel = curNoneRegion === 'reg' ? '규제지역' : '경기비규제';
+    if (curNoneRegion === 'reg') cap = 60000;
+  } else if (curSpecial === 'low') {
+    rate = 70; label = '서민실수요자';
+    regionLabel = curNoneRegion === 'reg' ? '규제지역' : '경기비규제';
+    if (curNoneRegion === 'reg') cap = 60000;
+  } else {
+    rate = curNoneRegion === 'reg' ? 40 : 70;
+    label = '일반 무주택';
+    regionLabel = curNoneRegion === 'reg' ? '규제지역' : '경기비규제';
+  }
+
+  const base = Math.min(app, bid);
+  let limit = Math.round(base * rate / 100);
+  let capped = false;
+  if (cap && limit > cap) { limit = cap; capped = true; }
+  const bidRatio = Math.round(bid / app * 100);
+  const isCheap = bidRatio <= 80;
+
+  document.getElementById('none-result').innerHTML = `
+    <div class="metric-grid">
+      <div class="metric">
+        <div class="ml">감정가</div>
+        <div class="mv">${fmtComma(app)}<span style="font-size:11px;font-family:var(--sans);color:var(--text-hint);margin-left:2px">만</span></div>
+        <div class="msub">${toKorUnit(app)}</div>
+      </div>
+      <div class="metric">
+        <div class="ml">낙찰가</div>
+        <div class="mv">${fmtComma(bid)}<span style="font-size:11px;font-family:var(--sans);color:var(--text-hint);margin-left:2px">만</span></div>
+        <div class="msub">${toKorUnit(bid)}</div>
+      </div>
+      <div class="metric">
+        <div class="ml">낙찰가율</div>
+        <div class="mv ${isCheap ? 'ok' : 'warn'}">${bidRatio}%</div>
+        <div class="msub">${isCheap ? '적정' : '고가 낙찰'}</div>
+      </div>
+    </div>
+    <div class="result-rows">
+      <div class="result-row"><span class="rl">구분</span><span class="rv">${label} <span class="badge badge-info">${regionLabel}</span></span></div>
+      <div class="result-row"><span class="rl">적용 LTV</span><span class="rv">${rate}%</span></div>
+      <div class="result-row">
+        <span class="rl">기준 금액 (낮은 금액)</span>
+        <span class="rv">${fmtComma(base)}만원 <span style="color:var(--text-hint);font-weight:400">(${toKorUnit(base)})</span></span>
+      </div>
+    </div>
+    <div class="highlight-row ${capped ? 'warn-row' : ''}">
+      <span class="hl">최대 대출 한도${capped ? ' <span class="badge badge-warn">6억 한도 적용</span>' : ''}</span>
+      <div class="hv-wrap">
+        <span class="hv">${fmtComma(limit)}만원</span>
+        <span class="hv-sub">${toKorUnit(limit)}</span>
+      </div>
+    </div>
+    ${capped ? '<p class="note" style="border-top:none;margin-top:.5rem">규제지역 생애최초·서민실수요자는 6억원 한도가 적용됩니다.</p>' : ''}
+    <p class="note">※ 실제 한도는 금융기관 DSR 심사, 기존 부채, 소득 등에 따라 달라질 수 있습니다.</p>
+    ${disclaimer}
+  `;
+  document.getElementById('none-result').classList.add('show');
+}
+
+function calcBiz() {
+  const app = toNum(document.getElementById('biz-appraisal').value);
+  const bid = toNum(document.getElementById('biz-bid').value);
+  if (!app || !bid) { alert('감정가와 낙찰가를 입력하세요.'); return; }
+
+  const byBid = Math.round(bid * 0.8);
+  const byApp = Math.round(app * 0.6);
+  const limit = Math.min(byBid, byApp);
+  const bidRatio = Math.round(bid / app * 100);
+  const isCheap = bidRatio <= 80;
+
+  document.getElementById('biz-result').innerHTML = `
+    <div class="metric-grid">
+      <div class="metric">
+        <div class="ml">감정가</div>
+        <div class="mv">${fmtComma(app)}<span style="font-size:11px;font-family:var(--sans);color:var(--text-hint);margin-left:2px">만</span></div>
+        <div class="msub">${toKorUnit(app)}</div>
+      </div>
+      <div class="metric">
+        <div class="ml">낙찰가</div>
+        <div class="mv">${fmtComma(bid)}<span style="font-size:11px;font-family:var(--sans);color:var(--text-hint);margin-left:2px">만</span></div>
+        <div class="msub">${toKorUnit(bid)}</div>
+      </div>
+      <div class="metric">
+        <div class="ml">낙찰가율</div>
+        <div class="mv ${isCheap ? 'ok' : 'warn'}">${bidRatio}%</div>
+        <div class="msub">${isCheap ? '적정' : '고가 낙찰'}</div>
+      </div>
+    </div>
+    <div class="result-rows">
+      <div class="result-row"><span class="rl">구분</span><span class="rv">매매사업자 <span class="badge badge-info">지방</span></span></div>
+      <div class="result-row">
+        <span class="rl">낙찰가 기준 (80%)</span>
+        <span class="rv">${fmtComma(byBid)}만원 <span style="color:var(--text-hint);font-weight:400">(${toKorUnit(byBid)})</span></span>
+      </div>
+      <div class="result-row">
+        <span class="rl">감정가 기준 (60%)</span>
+        <span class="rv">${fmtComma(byApp)}만원 <span style="color:var(--text-hint);font-weight:400">(${toKorUnit(byApp)})</span></span>
+      </div>
+    </div>
+    <div class="highlight-row">
+      <span class="hl">최대 대출 한도 (낮은 금액 적용)</span>
+      <div class="hv-wrap">
+        <span class="hv">${fmtComma(limit)}만원</span>
+        <span class="hv-sub">${toKorUnit(limit)}</span>
+      </div>
+    </div>
+    <p class="note">※ 낙찰가 80%와 감정가 60% 중 낮은 금액이 적용됩니다. 실제 한도는 금융기관 심사에 따라 다를 수 있습니다.</p>
+    ${disclaimer}
+  `;
+  document.getElementById('biz-result').classList.add('show');
+}
+</script>
+</body>
+</html>
